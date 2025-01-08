@@ -13,7 +13,7 @@ class AuthController {
                 });
             }
 
-            // Verificar si el email ya existe
+            // Verificar si el email ya existe como votante
             const userExists = await db.query(
                 'SELECT * FROM voters WHERE email = $1',
                 [email]
@@ -21,7 +21,19 @@ class AuthController {
 
             if (userExists.rows.length > 0) {
                 return res.status(400).json({
-                    error: 'El email ya está registrado'
+                    error: 'El email ya está registrado como votante'
+                });
+            }
+
+            // Verificar si existe como candidato
+            const candidateExists = await db.query(
+                'SELECT * FROM candidates WHERE email = $1',
+                [email]
+            );
+
+            if (candidateExists.rows.length > 0) {
+                return res.status(400).json({
+                    error: 'Este email pertenece a un candidato y no puede registrarse como votante'
                 });
             }
 

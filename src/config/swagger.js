@@ -24,7 +24,7 @@ const options = {
                 }
             },
             schemas: {
-                Voter: {
+                VoterInput: {
                     type: 'object',
                     required: ['name', 'email', 'password'],
                     properties: {
@@ -39,21 +39,78 @@ const options = {
                         },
                         password: {
                             type: 'string',
-                            description: 'Contraseña del votante'
+                            format: 'password',
+                            minLength: 6,
+                            description: 'Contraseña del votante (mínimo 6 caracteres)'
                         }
                     }
                 },
-                Candidate: {
+                VoterResponse: {
                     type: 'object',
-                    required: ['name'],
+                    properties: {
+                        id: {
+                            type: 'integer',
+                            description: 'ID autogenerado del votante'
+                        },
+                        name: {
+                            type: 'string',
+                            description: 'Nombre del votante'
+                        },
+                        email: {
+                            type: 'string',
+                            format: 'email',
+                            description: 'Email único del votante'
+                        },
+                        has_voted: {
+                            type: 'boolean',
+                            description: 'Indica si el votante ya ha emitido su voto',
+                            default: false
+                        }
+                    }
+                },
+                CandidateInput: {
+                    type: 'object',
+                    required: ['name', 'email', 'party'],
                     properties: {
                         name: {
                             type: 'string',
                             description: 'Nombre del candidato'
                         },
+                        email: {
+                            type: 'string',
+                            format: 'email',
+                            description: 'Email único del candidato'
+                        },
                         party: {
                             type: 'string',
                             description: 'Partido político del candidato'
+                        }
+                    }
+                },
+                CandidateResponse: {
+                    type: 'object',
+                    properties: {
+                        id: {
+                            type: 'integer',
+                            description: 'ID autogenerado del candidato'
+                        },
+                        name: {
+                            type: 'string',
+                            description: 'Nombre del candidato'
+                        },
+                        email: {
+                            type: 'string',
+                            format: 'email',
+                            description: 'Email único del candidato'
+                        },
+                        party: {
+                            type: 'string',
+                            description: 'Partido político del candidato'
+                        },
+                        votes: {
+                            type: 'integer',
+                            description: 'Número de votos recibidos',
+                            default: 0
                         }
                     }
                 },
@@ -68,6 +125,75 @@ const options = {
                         candidate_id: {
                             type: 'integer',
                             description: 'ID del candidato'
+                        }
+                    }
+                },
+                VoteResponse: {
+                    type: 'object',
+                    properties: {
+                        id: {
+                            type: 'integer',
+                            description: 'ID autogenerado del voto'
+                        },
+                        voter_id: {
+                            type: 'integer',
+                            description: 'ID del votante'
+                        },
+                        candidate_id: {
+                            type: 'integer',
+                            description: 'ID del candidato'
+                        },
+                        created_at: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'Fecha y hora del voto'
+                        }
+                    }
+                },
+                VoteStatistics: {
+                    type: 'object',
+                    properties: {
+                        candidates: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    id: {
+                                        type: 'integer',
+                                        description: 'ID del candidato'
+                                    },
+                                    name: {
+                                        type: 'string',
+                                        description: 'Nombre del candidato'
+                                    },
+                                    party: {
+                                        type: 'string',
+                                        description: 'Partido político'
+                                    },
+                                    votes: {
+                                        type: 'integer',
+                                        description: 'Número de votos recibidos'
+                                    },
+                                    percentage: {
+                                        type: 'number',
+                                        format: 'float',
+                                        description: 'Porcentaje de votos recibidos'
+                                    }
+                                }
+                            }
+                        },
+                        total_votes: {
+                            type: 'integer',
+                            description: 'Total de votos emitidos'
+                        }
+                    }
+                },
+                Error: {
+                    type: 'object',
+                    properties: {
+                        error: {
+                            type: 'string',
+                            description: 'Mensaje de error'
                         }
                     }
                 }

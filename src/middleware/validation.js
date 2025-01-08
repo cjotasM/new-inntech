@@ -17,17 +17,45 @@ const voterValidationRules = [
         .isEmail()
         .withMessage('Valid email is required')
         .custom(async (email) => {
+            // Verificar si existe como votante
             const voter = await Voter.findByEmail(email);
             if (voter) {
-                throw new Error('Email already registered');
+                throw new Error('Email already registered as a voter');
+            }
+
+            // Verificar si existe como candidato
+            const candidate = await Candidate.findByEmail(email);
+            if (candidate) {
+                throw new Error('This email belongs to a candidate and cannot be registered as a voter');
             }
             return true;
         }),
+    body('password')
+        .isLength({ min: 6 })
+        .withMessage('Password must be at least 6 characters long')
 ];
 
 const candidateValidationRules = [
     body('name').trim().notEmpty().withMessage('Name is required'),
-    body('party').optional().trim(),
+    body('party').trim().notEmpty().withMessage('Party is required'),
+    body('email')
+        .trim()
+        .isEmail()
+        .withMessage('Valid email is required')
+        .custom(async (email) => {
+            // Verificar si existe como candidato
+            const candidate = await Candidate.findByEmail(email);
+            if (candidate) {
+                throw new Error('Email already registered as a candidate');
+            }
+
+            // Verificar si existe como votante
+            const voter = await Voter.findByEmail(email);
+            if (voter) {
+                throw new Error('This email belongs to a voter and cannot be registered as a candidate');
+            }
+            return true;
+        }),
 ];
 
 const voteValidationRules = [

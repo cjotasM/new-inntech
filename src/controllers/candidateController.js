@@ -3,11 +3,18 @@ const db = require('../config/database');
 class CandidateController {
     async create(req, res) {
         try {
-            const { name, party } = req.body;
-            
+            const { name, party, email } = req.body;
+
+            if (!email) {
+                return res.status(400).json({
+                    error: 'El email es requerido'
+                });
+            }
+
+            // Verificar si existe como votante
             const voterExists = await db.query(
                 'SELECT id FROM voters WHERE email = $1',
-                [req.body.email]
+                [email]
             );
 
             if (voterExists.rows.length > 0) {
@@ -16,9 +23,21 @@ class CandidateController {
                 });
             }
 
+            // Verificar si ya existe como candidato
+            const candidateExists = await db.query(
+                'SELECT id FROM candidates WHERE email = $1',
+                [email]
+            );
+
+            if (candidateExists.rows.length > 0) {
+                return res.status(400).json({
+                    error: 'Este email ya está registrado como candidato'
+                });
+            }
+
             const result = await db.query(
-                'INSERT INTO candidates (name, party) VALUES ($1, $2) RETURNING *',
-                [name, party]
+                'INSERT INTO candidates (name, party, email) VALUES ($1, $2, $3) RETURNING *',
+                [name, party, email]
             );
 
             res.status(201).json(result.rows[0]);

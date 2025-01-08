@@ -1,16 +1,16 @@
 const db = require('../config/database');
 
 class Voter {
-    static async create({ name, email }) {
-        const query = 'INSERT INTO voters (name, email) VALUES ($1, $2) RETURNING *';
-        const values = [name, email];
+    static async create({ name, email, password }) {
+        const query = 'INSERT INTO voters (name, email, password) VALUES ($1, $2, $3) RETURNING *';
+        const values = [name, email, password];
         const { rows } = await db.query(query, values);
         return rows[0];
     }
 
     static async findAll(page = 1, limit = 10) {
         const offset = (page - 1) * limit;
-        const query = 'SELECT * FROM voters ORDER BY id LIMIT $1 OFFSET $2';
+        const query = 'SELECT id, name, email, has_voted FROM voters ORDER BY id LIMIT $1 OFFSET $2';
         const { rows } = await db.query(query, [limit, offset]);
         const countQuery = 'SELECT COUNT(*) FROM voters';
         const { rows: countRows } = await db.query(countQuery);
@@ -23,7 +23,7 @@ class Voter {
     }
 
     static async findById(id) {
-        const query = 'SELECT * FROM voters WHERE id = $1';
+        const query = 'SELECT id, name, email, has_voted FROM voters WHERE id = $1';
         const { rows } = await db.query(query, [id]);
         return rows[0];
     }

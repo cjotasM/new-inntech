@@ -1,10 +1,16 @@
 const db = require('../config/database');
 
 class Candidate {
-    static async create({ name, party }) {
-        const query = 'INSERT INTO candidates (name, party) VALUES ($1, $2) RETURNING *';
-        const values = [name, party];
+    static async create({ name, party, email }) {
+        const query = 'INSERT INTO candidates (name, party, email) VALUES ($1, $2, $3) RETURNING *';
+        const values = [name, party, email];
         const { rows } = await db.query(query, values);
+        return rows[0];
+    }
+
+    static async findByEmail(email) {
+        const query = 'SELECT * FROM candidates WHERE email = $1';
+        const { rows } = await db.query(query, [email]);
         return rows[0];
     }
 
