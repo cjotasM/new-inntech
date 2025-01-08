@@ -108,7 +108,6 @@ sistema-votaciones/
 │   │   └── voteController.js
 │   ├── middleware/
 │   │   ├── auth.js
-│   │   ├── errorHandler.js
 │   │   └── validation.js
 │   ├── routes/
 │   │   ├── authRoutes.js
