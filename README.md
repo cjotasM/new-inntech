@@ -109,6 +109,10 @@ sistema-votaciones/
 │   ├── middleware/
 │   │   ├── auth.js
 │   │   └── validation.js
+│   ├── models/
+│   │   ├── Candidate.js
+│   │   ├── Voter.js
+│   │   └── Vote.js
 │   ├── routes/
 │   │   ├── authRoutes.js
 │   │   ├── candidateRoutes.js
